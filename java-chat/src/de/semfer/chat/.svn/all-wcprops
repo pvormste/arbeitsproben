@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/semfer/!svn/ver/38/trunk/src/de/semfer/chat
+END
+Connection.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/semfer/!svn/ver/30/trunk/src/de/semfer/chat/Connection.java
+END
+StartUp.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/semfer/!svn/ver/36/trunk/src/de/semfer/chat/StartUp.java
+END
+Chatserver.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/semfer/!svn/ver/33/trunk/src/de/semfer/chat/Chatserver.java
+END
+ChatFrame.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/semfer/!svn/ver/38/trunk/src/de/semfer/chat/ChatFrame.java
+END
+Log.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/semfer/!svn/ver/38/trunk/src/de/semfer/chat/Log.java
+END

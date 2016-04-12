@@ -1,0 +1,229 @@
+/**
+* File-Name: Config.java
+* Package-Name: de.semfer.database
+* @since 01.08.2011 - 23:00:00
+* @author Jennifer Ulges, Patric Vormstein
+* @version 1.3
+* Description:
+* 	Stellt eine Verbindung mittels hibernate.cfg.xml her
+* Last Change:
+<<<<<<< .mine
+* 	+ Passwort fuer die Tabellenerstellung hinzugefuegt
+* 	+ Kommentare hinzugefuegt
+*   + Encryptor eingefuehrt
+=======
+* 	+ Updaten der Allgemeinen Infos möglich
+* 	+ Abrufen der Allgemeinen Infos hinzugefügt
+* 	+ Passwort für die Tabellenerstellung hinzugefügt
+>>>>>>> .r20
+**/
+package de.semfer.database;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.hibernate.encryptor.HibernatePBEEncryptorRegistry;
+
+public final class Config {
+	
+	private Configuration config;
+	private SessionFactory factory;
+	private Object[] info;
+	
+	/**
+	 * <b>Config()</b><p>Konstruktor fuer die Configuration</p>
+	 */
+	public Config(){
+		config = new Configuration();
+		
+		// Tabellenklassen
+		config.addAnnotatedClass(User.class);
+		config.addAnnotatedClass(GeneralInfo.class);
+		
+		// Konfiguration anwenden
+		config.configure();
+		
+		// Create and configure the encryptor
+		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+		encryptor.setPassword("bauminator");
+		   
+		// Register the encryptor for use from within Hibernate types
+		HibernatePBEEncryptorRegistry registry = HibernatePBEEncryptorRegistry.getInstance();
+		registry.registerPBEStringEncryptor("hibernateStringEncryptor",encryptor);
+		
+		// SessionFactory erstellen
+		factory = config.buildSessionFactory();
+		
+		// Allgemeine Informationen in das info[]-Array speichern - jederzeit abrufbar
+		selectGeneralInfo();
+	}
+	
+	/**
+	 * <b><u>Object[]</u> selectGeneralInfo()</b><p>Selektiert die Allgemeinen Infos aus der Datenbank und speichert sie in ein Objekt-Array.</p>
+	 * 
+	 * @return <u>Object[]</u> result
+	 */
+	public Object[] selectGeneralInfo(){
+		try{
+			Session session = factory.getCurrentSession();
+			session.beginTransaction();
+			
+			// Query ausführen und Tupel speichern
+			Query query = session.createQuery("Select generalInfo.siteName, generalInfo.version from GeneralInfo generalInfo");
+			Object[] result = (Object[])query.uniqueResult();		
+			session.getTransaction().commit();
+			
+			// Ergebnis in die info Schreiben, damit nicht jedes Mal Methode ausgeführt werden muss.
+			info = result;
+	
+			return result;
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim auslesen der Infos: "+e);
+			
+			return null;
+		}
+	}
+	
+	/**
+	 * <b><u>boolean</u> updateGeneralInfo(String version)</b><p>Updatet die version mit der angegebenen Nummer</p>
+	 * 
+	 * @param version : Die neue Versionsnummer
+	 * @param password : Das notwendige Passwort
+	 * @return <u>boolean</u> true : Wenn Update erfolgreich<br><u>boolean</u> false : Wenn Exception oder Passwort falsch
+	 */
+	public boolean updateGeneralInfo(String version, String password){
+		try{
+			// Richtiges Passwort notwendig
+			if(password.equals("bauminator")){
+				Session session = factory.getCurrentSession();
+				session.beginTransaction();
+				
+				// Update Query erstellen und entsprechendes ersetzen
+				Query query = session.createQuery("update GeneralInfo set version = :newVersion where id = 0");
+				query.setString("newVersion", version);
+				
+				// Update ausführen
+				query.executeUpdate();
+				session.getTransaction().commit();
+				
+				// Allgemeine Infos updaten
+				info = selectGeneralInfo();
+				
+				return true;
+			}
+			
+			return false;
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim Info-Update: "+e);
+			
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * <b><u>boolean</u> updateGeneralInfo(String siteName, String version)</b><p>Updatet die version mit der angegebenen Nummer (Passwort notwendig).</p>
+	 * 
+	 * @param siteName : Der neue Seitenname
+	 * @param version : Die neue Versionsnummer
+	 * @param password : Das Passwort fuers Update
+	 * @return <u>boolean</u> true : Wenn Update erfolgreich<br><u>boolean</u> false : Wenn Exception oder Passwort falsch
+	 */
+	public boolean updateGeneralInfo(String siteName, String version, String password){
+		try{
+			// Richtiges Passwort notwendig
+			if(password.equals("bauminator")){
+				Session session = factory.getCurrentSession();
+				session.beginTransaction();
+				
+				// Update Query erstellen und entsprechendes ersetzen
+				Query query = session.createQuery("update GeneralInfo set siteName = :newSiteName, version = :newVersion where id = 0");
+				query.setString("newSiteName", siteName);
+				query.setString("newVersion", version);
+				
+				// Update ausführen
+				query.executeUpdate();
+				session.getTransaction().commit();
+				
+				// Allgemeine Infos updaten
+				info = selectGeneralInfo();
+				
+				return true;
+			}
+			
+			return false;
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim Info-Update: "+e);
+			
+			return false;
+		}
+	}
+	
+	/**
+	 * <b><u>boolean</u> createTables(String password)</b><p>Erstellt alle Tabellen in der Datenbank. Passwort notwendig.</p>
+	 * 
+	 * @param password : Notwendiges Passwort fuer die Ausfuehrung
+	 * @return <u>boolean</u> true : Wenn Erstellen erfolgreich<br><u>boolean</u> false : Wenn Exception oder Passwort falsch
+	 */
+	public boolean createTables(String password){
+		try{
+			// richtiges Passwort notwendig
+			if(password.equals("bauminator")){
+				// Tabellen erstellen
+				new SchemaExport(config).create(true, true);
+				
+				return true;
+			}
+			
+			return false;
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim Erstellen der Tabellen: "+e);
+			
+			return false;
+		}
+	}
+
+	/**
+	 * <b><u>Configuration</u> getConfig()</b><p>Getter fuer Configuration config</p>
+	 * 
+	 * @return <u>Configuration</u> config
+	 */
+	public Configuration getConfig() {
+		return config;
+	}
+
+	/**
+	 * <b><u>SessionFactory</u> getFactory()</b><p>Getter für die SessionFactory</p>
+	 * 
+	 * @return <u>SessionFactory</u> factory
+	 */
+	public SessionFactory getFactory() {
+		return factory;
+	}
+
+	/**
+	 * <b><u>void</u> setFactory(SessionFactory factory)</b><p>Setter für die SessionFactory</p>
+	 * 
+	 * @param factory : Die SessionFactory
+	 */
+	public void setFactory(SessionFactory factory) {
+		this.factory = factory;
+	}
+
+	/**
+	 * <b><u>Object[]</u> getInfo()</b><p>Getter für die Allgemeinen Infos</p>
+	 * 
+	 * @return <u>Object[]</u> info
+	 */
+	public Object[] getInfo() {
+		return info;
+	}
+	
+}

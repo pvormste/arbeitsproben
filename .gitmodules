@@ -1,0 +1,21 @@
+[submodule "rocket-league-jsonizer"]
+	path = rocket-league-jsonizer
+	url = https://github.com/pvormste/RocketLeagueReplay-Jsonizer
+[submodule "rocket-league-parser-node"]
+	path = rocket-league-parser-node
+	url = https://github.com/pvormste/rlr-parser-node
+[submodule "textursynthese"]
+	path = textursynthese
+	url = https://github.com/pvormste/ts-practical
+[submodule "SimplePuttyImporter"]
+	path = SimplePuttyImporter
+	url = https://github.com/pvormste/SimplePuttyImporter
+[submodule "pong-dotnet"]
+	path = pong-dotnet
+	url = https://github.com/pvormste/SaiyanatorPong
+[submodule "template-parser-go"]
+	path = template-parser-go
+	url = https://github.com/pvormste/atempgo
+[submodule "php-semesterferien-projekt"]
+	path = php-semesterferien-projekt
+	url = https://github.com/pvormste/swa-project

@@ -1,0 +1,437 @@
+/**
+* File: ChatFrame.java
+* Package: de.semfer.chat
+* @since 10.08.2011 - 17:07:23
+* @author Patric Vormstein
+* @version 1.1
+* Description:
+* 	 ChatFrame(Fenster) in dem der eingentliche Chat stattfindet
+* Last Change:
+* 	+ say-Methode überholt
+**/
+package de.semfer.chat;
+
+
+import java.awt.Color;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.regex.Pattern;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+
+
+/**
+ * Class: ChatFrame.java
+ * @author Jennifer Ulges<br>Patric Vormstein
+ *
+ */
+public final class ChatFrame extends JFrame implements Runnable {
+	
+	/** UID des Frames */
+	private static final long serialVersionUID = 5038896512881122760L;
+	
+	/** Objektvariablen des ChatFrames: Nickname und Serversocket */
+	private String name;
+	private Socket socket;
+	
+	/** Input- und Outputstream für alle auszutauschenden Informationen zwischen Client und Server */
+	private ObjectOutputStream out;
+	private ObjectInputStream in;
+	
+	/** Swing-Komponenten zu Darstellung des ChatFrames */
+	private JTextField inputfield;
+	private JTextArea outputArea;
+	private JList<String> userListArea;
+	private JScrollPane scrollList, scrollOut;
+	
+<<<<<<< .mine
+	/** Thread f�r den ChatFrame */
+=======
+	/** Thread für den ChatFrame */
+>>>>>>> .r30
+	private Thread thread;
+	
+	/** StartUp des ChatFrames */
+	private StartUp parent;
+	
+
+	/**
+	 * <b>ChatFrame(String, Socket, StartUp)</b><p>Konstruktor.</p>
+	 *
+	 * @author Jennifer Ulges<br>Patric Vormstein
+	 * @since 1.0
+	 * @param nickname : Nickname des eingeloggten Users
+	 * @param socket : Chatserver-Socket
+<<<<<<< .mine
+	 * @param parent : StartUp von dem aus der ChatFrame ge�ffnet wurde
+=======
+	 * @param parent : StartUp von dem aus der ChatFrame geüffnet wurde
+>>>>>>> .r30
+	 * 
+	 */
+	public ChatFrame(String nickname, Socket socket, StartUp parent){
+		
+		//Zuweisung der übergebenen Parameter an die Objektvariablen
+		this.name = nickname;
+		this.socket = socket;
+		this.parent = parent;
+		
+		//Initialisierung des Eingabfelds und Hinzufügen des KeyListeners
+		inputfield = new JTextField();
+    	inputfield.addKeyListener(new NewKeyAdapter());
+    	inputfield.setFont(new Font("Dialog", Font.PLAIN, 14));
+    	inputfield.setBackground(Color.white);
+		
+    	//Initialisierung des Ausgabefeldes (Schriftformat, nicht editierbar)
+		outputArea = new JTextArea();
+<<<<<<< .mine
+=======
+		outputArea.setFont( new Font("Verdana", Font.PLAIN, 16));
+>>>>>>> .r30
+		outputArea.setEditable(false);
+		outputArea.setFont( new Font("Dialog", Font.PLAIN, 14));
+		outputArea.setForeground(Color.white);		
+		outputArea.setBackground(Color.black);
+		outputArea.setLineWrap(true);
+		outputArea.setWrapStyleWord(true);
+		
+<<<<<<< .mine
+		//Initialisierung des Listenfeldes f�r die UserList (Mehrfachauswahl, Hinzufuegen des KeyListeners)
+=======
+		//Initialisierung des Listenfeldes für die UserList (Mehrfachauswahl, Hinzufügen des KeyListeners)
+>>>>>>> .r30
+		userListArea = new JList<String>();
+		userListArea.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		userListArea.setModel(new DefaultListModel<String>());
+		userListArea.addKeyListener(new NewKeyAdapter());
+		userListArea.setFont(new Font("SansSerif", Font.BOLD, 16));
+		userListArea.setForeground(Color.white);
+		userListArea.setBackground(Color.black);
+	
+		
+		//Initialisierung der ScrollPanes
+		scrollList = new JScrollPane(userListArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		//scrollList.setPreferredSize(new Dimension(200, 700));
+		scrollOut = new JScrollPane(outputArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		
+		try{
+			//Initialisierung der Streams und direktes Senden des UserNamen inkl. Trigger
+			out = new ObjectOutputStream(socket.getOutputStream());
+			in = new ObjectInputStream(socket.getInputStream());
+			say(1, "Verbindung zum Server aufgenommen...");	
+			out.writeObject(Chatserver.TRIGGER_CONNECT+name);
+			out.flush();
+			
+		}catch(IOException e){
+			e.printStackTrace();
+			say(3, "Verbindung zum Server fehlgeschlagen!");	
+		}
+		
+<<<<<<< .mine
+		//WindowListener, beim Schlie�en des ChatFrames soll die Methode closeFrame() ausgefuehrt werden
+=======
+		//WindowListener, beim Schließen des ChatFrames soll die Methode closeFrame() ausgeführt werden
+>>>>>>> .r30
+		this.addWindowListener(new WindowAdapter(){
+			public void windowClosing (WindowEvent e){
+				 closeFrame();
+			}
+		});
+		
+		//Setzen der Parameter für den ChatFrame (Titel, Fenstergröße, Position, Layout)
+		this.setTitle("Nickname: "+name);
+		this.setSize(950,700);
+		this.setLocationRelativeTo(null); 
+		this.setLayout(new GridBagLayout());
+		
+<<<<<<< .mine
+		//GridBagConstraints (gridx, gridy, gridwidth, gridheight, weightx, weighty, anchor, fill, insets, ipadx, ipady)
+		GridBagConstraints con = new GridBagConstraints(1, 2, 1, 1, 1, 1, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(1,1,1,1), 0, 7);
+=======
+		//Swing-Komponenten werden in den Frame eingefügt
+		this.add("South", inputfield);
+		this.add("West", outputArea);
+		this.add("East", userListArea);
+>>>>>>> .r30
+		
+<<<<<<< .mine
+		//Eingabefeld wird in den Frame eingefuegt
+		this.add(inputfield, con);
+		
+		//Ausgabefeld wird in den Frame eingefuegt
+		con.gridy = 1;
+		con.weightx = 500;
+		con.weighty = 500;
+		con.fill = GridBagConstraints.BOTH;
+		con.ipady = 0;
+		this.add(scrollOut, con);
+		
+		//UserList wird in den Frame eingefuegt
+		con.anchor = GridBagConstraints.EAST;
+		con.gridx = 2;
+		con.gridheight = 2;
+		con.weightx = 1;
+		con.weighty = 500;
+		con.fill = GridBagConstraints.VERTICAL;
+		con.ipadx = 100;
+		con.ipady = 0;
+		this.add(scrollList, con);
+		
+		//Thread wird initialisiert und mit minimaler Prioritaet gestartet
+=======
+		//Thread wird initialisiert und mit minimaler Priorität gestartet
+>>>>>>> .r30
+		if(thread == null){	
+			thread = new Thread(this);
+			thread.setPriority(Thread.MIN_PRIORITY);
+			thread.start();
+		}
+	}
+	
+	/**
+	 * <b><u>void</u> run()</b><p>Thread-Run-Methode zur Bearbeitung der Ausgabefelder im ChatFrame</p>
+	 *
+	 * @author Patric Vormstein
+	 * @since 1.0
+	 */
+	public void run(){
+		
+		// String vom Inputstream
+		String line;
+		
+		try{
+			// solange Thread nicht unterbrochen ist
+			while(!thread.isInterrupted()){
+				
+				try {
+					// String aus dem InputStream wird gelesen
+					line = in.readObject().toString();
+				} catch (ClassNotFoundException e) {
+					line = null;
+					System.err.println("Fehler beim Stream-Read: "+e);
+				}
+				
+				// (ausgelöst durch entsprechenden Trigger) wenn ein User den Chat verlässt wird UserListArea aktualisiert
+				if(line != null && line.equals(Chatserver.TRIGGER_TIMEOUT)){
+					say(2,"Verbindung zum Server verloren (TimeOut)");
+				}
+				// (ausgelöst durch entsprechenden Trigger) wenn ein User den Chat verlässt wird UserListArea aktualisiert
+				else if(line != null && line.startsWith(Chatserver.TRIGGER_REMOVEUSER)){
+					userListArea.setModel(removeUser(line));
+					userListArea.revalidate();
+				}
+				// (ausgelöst durch entsprechenden Trigger) wenn ein neuer User in den Chat eintritt wird UserListArea aktualisiert
+				else if(line != null && line.startsWith(Chatserver.TRIGGER_NEWUSER)){
+					userListArea.setModel(newUser(line));
+					userListArea.revalidate();
+				}
+				// (ausgelöst durch entsprechenden Trigger) wenn ein User sich verbindet wird UserListArea aktualisiert
+				else if(line != null && line.startsWith(Chatserver.TRIGGER_CONNECT)){
+					userListArea.setModel(userModel(line));
+					userListArea.revalidate();
+				}
+				//eingegangene Nachricht wird im Ausgabefeld sichtbar gemacht
+				else if(line != null){	
+					outputArea.append(line+"\n\n");	
+					int maxScroll = scrollOut.getVerticalScrollBar().getMaximum();
+					scrollOut.getVerticalScrollBar().setValue(maxScroll);
+				}
+			}
+		}catch(IOException e){	
+			 say(2, "Verbindung zum Server abgebrochen");	
+		}
+		
+	}
+	
+	/**
+<<<<<<< .mine
+	 * <b><u>void</u> closeFrame()</b><p>Methode dienst zum korrekten Schlie�en des ChatFrames und aller offener Streams und Verbindungen</p>
+=======
+	 * <b><u>void</u> closeFrame()</b><p>Methode dienst zum korrekten Schließen des ChatFrames und aller offener Streams und Verbindungen</p>
+>>>>>>> .r30
+	 *
+	 * @author Jennifer Ulges<br>Patric Vormstein
+	 * @since 1.0
+	 * 
+	 */
+	protected void closeFrame(){
+		try{
+<<<<<<< .mine
+			//Trigger f�r Diconnenct inkl. Name wird direkt verschickt
+=======
+			//Trigger für Diconnenct inkl. Name wird direkt verschickt
+>>>>>>> .r30
+			out.writeObject(Chatserver.TRIGGER_DISCONNECT+name);
+			out.flush();
+			//Beide Streams und der Serversocket werden geschlossen
+			out.close();
+			in.close();
+			socket.close();		
+		}catch(IOException e){
+			System.err.println("Fehler beim Schließen:");
+			e.printStackTrace();
+		}
+		
+		//Thread wird unterbrochen und auf null gesetzt
+		if((thread != null) && thread.isAlive()){
+			thread.interrupt();
+			thread = null;
+		}
+		//User ist ausgeloggt, setLoggedIn wird zu false
+		parent.setLoggedIn(false);
+		
+		//Fenster ChatFrame verschwindet
+		this.dispose();
+		
+	}
+	
+	/**
+	 * <b><u>void</u> say()</b><p>Dient zur Ausgabe allgemeiner Systemnachrichten an alle Clients</p>
+	 *
+	 * @author Jennifer Ulges<br>Patric Vormstein
+	 * @since 1.0
+	 * @last_update 1.1
+	 * @param option : 1 - Connect | 2 - Verbindungsabbruch/TimeOut | 3 - Keine verbindung hergestellt
+	 * @param msg
+	 */
+	protected void say(int option, String msg){
+		if(option == 1){
+			outputArea.append("*** "+msg+" ***\n");
+		}
+		else if(option == 2){
+			inputfield.setEditable(false);
+			inputfield.setBackground(Color.YELLOW);
+			inputfield.setText("< "+msg+" >");
+		}
+		else if(option == 3){
+			inputfield.setEditable(false);
+			inputfield.setBackground(Color.RED);
+			inputfield.setText("< "+msg+" >");
+		}
+	}
+	
+	/**
+	 * <b><u>DefaultListModel</u> userModel()</b><p>Erstellung der UserList </p>
+	 *
+	 * @author Patric Vormstein
+	 * @since 1.0
+	 * @param line
+	 * @return <u>DefaultListModel</u>
+	 * 
+	 */
+	private DefaultListModel<String> userModel(String line){
+		//übergebener String (z.B. TRIGGER[Anna, Klaus, Peter, ...]) wird so bearbeitet, 
+		//dass nur noch die einzelnen Usernamen in ein String-Array gespeichert werden
+		String[] array = line.substring(26, line.length()-1).split(Pattern.quote(", "));
+		DefaultListModel<String> newModel = (DefaultListModel<String>) userListArea.getModel();
+		
+		//String-Array der UserNamen wird innerhalb der For-Schleife nach und nach in das DefaultListModel geschrieben
+		for(int i = 0; i < array.length; i++){
+			newModel.addElement(array[i]);
+		}
+		
+		//dienst zur Kontrolle auf der Konsole
+		System.out.println(newModel);
+		
+		return newModel;
+	}
+	
+	/**
+	 * <b><u>DefaultListModel</u> newUser()</b><p>Methode dient dem Hinzufügen eines neu eingeloggten Usernamens zu UserList</p>
+	 *
+	 * @author Patric Vormstein
+	 * @since 1.0
+	 * @param line
+	 * @return <u>DefaultListModel</u>
+	 * 
+	 */
+	private DefaultListModel<String> newUser(String line){
+		
+		//Name wird aus dem gesendetetn String herausgefiltert
+		String userName = line.substring(25);
+		
+		//Liste wird aus der JList ausgelesen...
+		DefaultListModel<String> newModel = (DefaultListModel<String>) userListArea.getModel();
+		
+		//...und der entsprechende Username wird der Liste hinzugefügt
+		newModel.addElement(userName);
+		
+		return newModel;
+	}
+	
+	/**
+	 * <b><u>DefaultListModel</u> removeUser()</b><p>Methode dient zum Entfernen eines Usernamens aus der UserList</p>
+	 *
+	 * @author Patric Vormstein
+	 * @since 1.0
+	 * @param line
+	 * @return <u>DefaultListModel</u>
+	 * 
+	 */
+	private DefaultListModel<String> removeUser(String line){
+		
+		//Name wird aus dem gesendetetn String herausgefiltert
+		String userName = line.substring(25);
+		
+		//Liste wird aus der JList ausgelesen...
+		DefaultListModel<String> newModel = (DefaultListModel<String>) userListArea.getModel();
+		
+		//..und der entsprechende Username wird aus der Lite entfernt
+		newModel.removeElement(userName);
+		
+		return newModel;
+	}
+	
+	/**
+	 * KeyAdapter zur einfachen Realisierung der KeyEvents
+	 * @author Patric Vormstein
+	 */
+	class NewKeyAdapter extends KeyAdapter {
+		public void keyPressed(KeyEvent e) {
+<<<<<<< .mine
+			//wenn Enter gedrueckt wird soll der nicht leere Text aus dem Eingabefeld ohne fuehrende Leerzeichen 
+			//an den OutputStream direkt �bergeben werden / Realisierung des Nachrichten-Sendens
+=======
+			//wenn Enter gedrückt wird soll der nicht leere Text aus dem Eingabefeld ohne führende Leerzeichen 
+			//an den OutputStream direkt übergeben werden / Realisierung des Nachrichten-Sendens
+>>>>>>> .r30
+			if(e.getKeyCode() == KeyEvent.VK_ENTER){
+				JTextField o = (JTextField)e.getSource();
+				String inp = o.getText();
+				if(!inp.trim().equals("")){
+					try {
+						out.writeObject(inp.trim());
+						out.flush();
+					} catch (IOException ex) {
+						System.err.println("Fehler beim Stream-Write: "+e);
+					}
+				}
+				//Eingabefeld wird wieder geleert
+				inputfield.setText("");
+			}
+			//wird die Taste F1 gedrückt soll die Auswahl in der JList wieder aufgehoben werden
+			if(e.getKeyCode() == KeyEvent.VK_F1){
+				userListArea.clearSelection();
+			}
+		}
+	}
+
+}

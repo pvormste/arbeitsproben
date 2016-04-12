@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/semfer/!svn/ver/20/trunk/src/de/semfer/database
+END
+Config.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/semfer/!svn/ver/20/trunk/src/de/semfer/database/Config.java
+END
+GeneralInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/semfer/!svn/ver/20/trunk/src/de/semfer/database/GeneralInfo.java
+END
+InsertDB.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/semfer/!svn/ver/19/trunk/src/de/semfer/database/InsertDB.java
+END
+QueryDB.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/semfer/!svn/ver/20/trunk/src/de/semfer/database/QueryDB.java
+END
+User.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/semfer/!svn/ver/20/trunk/src/de/semfer/database/User.java
+END

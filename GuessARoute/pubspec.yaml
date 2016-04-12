@@ -1,0 +1,8 @@
+name: guess_a_route
+version: 0.0.1
+description: >
+  A small game playing with google maps.
+author: Patric Vormstein
+dependencies:
+  browser: any
+  google_maps: '>=3.0.0 <4.0.0'
