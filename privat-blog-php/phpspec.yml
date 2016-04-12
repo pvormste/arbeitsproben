@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: AboutPV
+        psr4_prefix: AboutPV
+        src_path: app

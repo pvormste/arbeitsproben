@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{0698D3FC-C6C6-44D4-AF46-AD549B21A3D9}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PlaneGame</RootNamespace>
+    <AssemblyName>PlaneGame</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\MonoGame.Binaries.3.2.0\build\net40\MonoGame.Binaries.targets" Condition="Exists('..\packages\MonoGame.Binaries.3.2.0\build\net40\MonoGame.Binaries.targets')" />
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="SDL.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="States\StateManager.cs" />
+    <Compile Include="States\BaseState.cs" />
+    <Compile Include="PlaneGame.cs" />
+    <Compile Include="Assets.cs" />
+    <Compile Include="States\MainMenuState.cs" />
+    <Compile Include="States\PlayState.cs" />
+    <Compile Include="Entities\Planes\BasePlane.cs" />
+    <Compile Include="States\DebugState.cs" />
+    <Compile Include="Tools\Hitbox.cs" />
+    <Compile Include="Entities\Base2D.cs" />
+    <Compile Include="Entities\Planes\TestPlane.cs" />
+    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Tools\Collision.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGameContentProcessors">
+      <HintPath>..\packages\MonoGame.ContentProcessors.3.2.1\lib\MonoGameContentProcessors.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="States\" />
+    <Folder Include="Content\" />
+    <Folder Include="Content\fonts\" />
+    <Folder Include="Content\img\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Entities\Planes\" />
+    <Folder Include="Tools\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\fonts\TestFont.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\img\Testplane.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
